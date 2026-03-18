@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Gradient Wheel Generator{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <form method="post" novalidate>
+      <div class="form-row">
+        <div
+          class="color-entry"
+          style="--entry-color: {{ last_colors[0] if last_colors and last_colors|length > 0 else 'transparent' }};"
+        >
+          <label for="color1">Color 1</label>
+          <input
+            type="text"
+            name="color1"
+            id="color1"
+            list="color-list"
+            value="{{ last_colors[0] if last_colors and last_colors|length > 0 else '' }}"
+            autocomplete="off"
+          />
+        </div>
+
+        <div
+          class="color-entry"
+          style="--entry-color: {{ last_colors[1] if last_colors and last_colors|length > 1 else 'transparent' }};"
+        >
+          <label for="color2">Color 2</label>
+          <input
+            type="text"
+            name="color2"
+            id="color2"
+            list="color-list"
+            value="{{ last_colors[1] if last_colors and last_colors|length > 1 else '' }}"
+            autocomplete="off"
+          />
+        </div>
+
+        <div
+          class="color-entry"
+          style="--entry-color: {{ last_colors[2] if last_colors and last_colors|length > 2 else 'transparent' }};"
+        >
+          <label for="color3">Color 3</label>
+          <input
+            type="text"
+            name="color3"
+            id="color3"
+            list="color-list"
+            value="{{ last_colors[2] if last_colors and last_colors|length > 2 else '' }}"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <datalist id="color-list">
+        {% for color in colors %}
+        <option value="{{ color }}"></option>
+        {% endfor %}
+      </datalist>
+
+      <div style="margin-top: 1rem;">
+        <button type="submit">Create gradient</button>
+      </div>
+
+      {% if error %}
+      <div class="error" role="alert">{{ error }}</div>
+      {% endif %}
+
+      {% if gradient_css %}
+      <div class="gradient-preview" style="background: {{ gradient_css }};"></div>
+      {% endif %}
+
+      {% if history %}
+      <section style="margin-top: 1.5rem;">
+        <h2>Recent gradients</h2>
+        <div class="history">
+          {% for entry in history %}
+          <form class="history-entry" method="post">
+            <input type="hidden" name="color1" value="{{ entry.colors[0] }}" />
+            <input type="hidden" name="color2" value="{{ entry.colors[1] }}" />
+            <input type="hidden" name="color3" value="{{ entry.colors[2] }}" />
+            <button type="submit" class="history-button" aria-label="Use {{ entry.colors[0] }}, {{ entry.colors[1] }}, {{ entry.colors[2] }}">
+              <div class="history-item">
+                <div class="swatch" style="background: linear-gradient(90deg, {{ entry.colors[0] }}, {{ entry.colors[1] }}, {{ entry.colors[2] }});"></div>
+                <div>
+                  <div><strong>{{ entry.colors[0] }}, {{ entry.colors[1] }}, {{ entry.colors[2] }}</strong></div>
+                  <div class="swatch-label">Created {{ entry.created }}</div>
+                </div>
+              </div>
+            </button>
+          </form>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}
